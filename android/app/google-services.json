@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "4254150490",
+    "project_id": "lastfirsbase",
+    "storage_bucket": "lastfirsbase.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4254150490:android:68f79008a37d03fcaf0d63",
+        "android_client_info": {
+          "package_name": "com.example.kareem_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEEYJvM6gqz8bGlQOPq-VDzkVVIw4PLaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4254150490:android:2e65b7fb4249aa3aaf0d63",
+        "android_client_info": {
+          "package_name": "com.example.lastfirsbase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEEYJvM6gqz8bGlQOPq-VDzkVVIw4PLaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
