@@ -8,6 +8,7 @@ import '../data/remote/firebase_service.dart';
 import '../data/remote/pose_tracking_service.dart';
 import '../data/repositories/app_repository.dart';
 import '../features/shared/app_bootstrap_screen.dart';
+import '../features/dashboard/home_shell_screen.dart';
 import '../providers/app_state_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/exercise_catalog_provider.dart';
@@ -56,7 +57,7 @@ class NabdAlHarakaApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'نبض الحركة',
+        title: 'مشروع التخرج',
         theme: AppTheme.light(),
         locale: const Locale('ar'),
         supportedLocales: const [
@@ -69,6 +70,20 @@ class NabdAlHarakaApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case '/home':
+              return MaterialPageRoute(
+                builder: (_) => const HomeShellScreen(),
+              );
+            case '/splash':
+              return MaterialPageRoute(
+                builder: (_) => const AppBootstrapScreen(),
+              );
+            default:
+              return null;
+          }
+        },
         home: const AppBootstrapScreen(),
       ),
     );

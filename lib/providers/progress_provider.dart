@@ -44,8 +44,11 @@ class ProgressProvider extends ChangeNotifier {
   }
 
   Future<void> loadForUser(String userId) async {
-    _loading = true;
-    notifyListeners();
+    // Use microtask to avoid setState during build
+    await Future.microtask(() {
+      _loading = true;
+      notifyListeners();
+    });
     _sessions = await _repository.getSessions(userId);
     _loading = false;
     notifyListeners();

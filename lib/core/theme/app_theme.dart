@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color sand = Color(0xFFF4E9DA);
-  static const Color coral = Color(0xFFDE6B48);
-  static const Color teal = Color(0xFF0F6E6E);
-  static const Color pine = Color(0xFF12343B);
-  static const Color mist = Color(0xFFE8F3F1);
+  // Figma Design Colors
+  static const Color primaryOrange = Color(0xFFD4883B); // Main orange/brown
+  static const Color primaryDark = Color(0xFFC97E3E); // Darker orange
+  static const Color sand = Color(0xFFF5F1EB); // Light background
+  static const Color coral = Color(0xFFDE6B48); // Accent color
+  static const Color teal = Color(0xFF0F6E6E); // Legacy (for compatibility)
+  static const Color pine = Color(0xFF2C2C2C); // Dark text
+  static const Color mist = Color(0xFFE8F3F1); // Light accent
+  static const Color lightBg = Color(0xFFFAF8F5); // Very light background
 
   static ThemeData light() {
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: teal,
-        primary: teal,
+        seedColor: primaryOrange,
+        primary: primaryOrange,
         secondary: coral,
         surface: Colors.white,
         brightness: Brightness.light,
@@ -44,7 +48,7 @@ class AppTheme {
     );
 
     return base.copyWith(
-      scaffoldBackgroundColor: sand,
+      scaffoldBackgroundColor: lightBg,
       textTheme: textTheme,
       cardTheme: CardThemeData(
         color: Colors.white,
@@ -77,13 +81,13 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(color: coral, width: 1.2),
+          borderSide: const BorderSide(color: primaryOrange, width: 1.2),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: teal,
+          backgroundColor: primaryOrange,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
@@ -97,7 +101,7 @@ class AppTheme {
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.white,
-        selectedItemColor: teal,
+        selectedItemColor: primaryOrange,
         unselectedItemColor: Color(0xFF7A8C90),
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
