@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/widgets/animated_widgets.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
