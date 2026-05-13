@@ -23,26 +23,33 @@ class DashboardTab extends StatelessWidget {
     final progress = context.watch<ProgressProvider>();
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(18, 12, 18, 120),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Custom Header
           Row(
             children: [
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: AppTheme.primaryOrange.withValues(alpha: 0.1),
+                child: const Icon(Icons.person_rounded, color: AppTheme.primaryOrange, size: 32),
+              ),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      auth.isGuest
-                          ? 'مرحبًا، ابدأ من حيث أنت'
-                          : 'أهلًا ${auth.currentUser?.name}',
-                      style: Theme.of(context).textTheme.headlineMedium,
+                      auth.isGuest ? 'مرحباً بك' : 'أهلاً، ${auth.currentUser?.name}',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 22,
+                          ),
                     ),
-                    const SizedBox(height: 6),
                     Text(
-                      'حلول صحية متكاملة لتطورك الشخصي',
-                      style: Theme.of(context).textTheme.bodyLarge,
+                      'خطة التعافي ليومك جاهزة',
+                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
                     ),
                   ],
                 ),
@@ -50,122 +57,209 @@ class DashboardTab extends StatelessWidget {
               _StatusPill(isOnline: appState.isOnline),
             ],
           ),
-          const SizedBox(height: 20),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(22),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppTheme.primaryOrange,
-                  AppTheme.primaryDark,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(32),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'خطة اليوم',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
-                      ),
+
+          const SizedBox(height: 30),
+
+          // Main Action Card (Featured)
+          AnimatedCard(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(26),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppTheme.primaryOrange, AppTheme.primaryDark],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                const SizedBox(height: 10),
-                const Text(
-                  'ابدأ رحلتك نحو حياة أفضل مع خطتنا المخصصة لك',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    height: 1.5,
+                borderRadius: BorderRadius.circular(36),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                    blurRadius: 25,
+                    offset: const Offset(0, 12),
                   ),
-                ),
-                const SizedBox(height: 18),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    _MetricBadge(
-                      label: 'جلسات محفوظة',
-                      value: '${progress.sessions.length}',
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'إحصائيات الأسبوع',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.trending_up_rounded, color: Colors.white, size: 20),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _LargeMetric(label: 'جلسات', value: '${progress.sessions.length}'),
+                      _LargeMetric(label: 'دقة', value: '${progress.averageAccuracy.toStringAsFixed(0)}%'),
+                      _LargeMetric(label: 'دقيقة', value: '${progress.totalMinutes}'),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    height: 8,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    _MetricBadge(
-                      label: 'متوسط الدقة',
-                      value: '${progress.averageAccuracy.toStringAsFixed(0)}%',
+                    child: FractionallySizedBox(
+                      alignment: Alignment.centerRight,
+                      widthFactor: 0.65, // Example progress
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
                     ),
-                    _MetricBadge(
-                      label: 'إجمالي الدقائق',
-                      value: '${progress.totalMinutes}',
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 18),
-          if (auth.isGuest)
-            Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryOrange.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: AppTheme.primaryOrange.withValues(alpha: 0.3),
-                ),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.cloud_sync_rounded,
-                      color: AppTheme.primaryOrange),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'أنت الآن بوضع محلي. أنشئ حسابًا لتفعيل Firebase ومزامنة الجلسات على السحابة.',
-                      style: Theme.of(context).textTheme.bodyMedium,
+
+          const SizedBox(height: 30),
+
+          if (auth.isGuest) ...[
+            _buildGuestNotification(context),
+            const SizedBox(height: 30),
+          ],
+
+          // Categories or Section Title
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'التمارين المخصصة',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const AuthScreen()),
-                      );
-                    },
-                    child: const Text('تفعيل'),
-                  ),
-                ],
               ),
-            ),
-          const SizedBox(height: 22),
-          Text('تمارين مقترحة',
-              style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 14),
-          ...exercises.take(3).map(
+              TextButton(
+                onPressed: () {},
+                child: const Text('عرض الكل', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Modern Exercise List
+          ...exercises.take(4).map(
                 (exercise) => Padding(
-                  padding: const EdgeInsets.only(bottom: 14),
-                  child: AnimatedCard(
-                    duration: const Duration(milliseconds: 500),
-                    child: _ExerciseCard(exercise: exercise),
-                  ),
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: _ModernExerciseCard(exercise: exercise),
                 ),
               ),
         ],
       ),
     );
   }
+
+  Widget _buildGuestNotification(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFDF7F2),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: AppTheme.primaryOrange.withValues(alpha: 0.1)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.cloud_upload_rounded, color: AppTheme.primaryOrange),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'مزامنة البيانات',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                Text(
+                  'قم بتسجيل الدخول لحفظ تقدمك سحابياً.',
+                  style: TextStyle(color: Colors.grey[700], fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AuthScreen()));
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryOrange,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              minimumSize: Size.zero,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: const Text('تفعيل', style: TextStyle(fontSize: 12)),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _ExerciseCard extends StatelessWidget {
-  const _ExerciseCard({required this.exercise});
+class _LargeMetric extends StatelessWidget {
+  final String label;
+  final String value;
 
+  const _LargeMetric({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+            fontSize: 26,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.7),
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ModernExerciseCard extends StatelessWidget {
   final ExerciseModel exercise;
+
+  const _ModernExerciseCard({required this.exercise});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(28),
       onTap: () {
         Navigator.push(
           context,
@@ -175,57 +269,97 @@ class _ExerciseCard extends StatelessWidget {
           ),
         );
       },
+      borderRadius: BorderRadius.circular(30),
       child: Container(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Row(
           children: [
+            // Image/Icon placeholder
             Container(
-              width: 72,
-              height: 72,
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.primaryOrange.withValues(alpha: 0.2),
-                    AppTheme.primaryOrange.withValues(alpha: 0.1),
-                  ],
-                ),
+                color: Colors.grey[50],
                 borderRadius: BorderRadius.circular(22),
               ),
-              child: const Icon(
-                Icons.accessibility_new_rounded,
-                size: 34,
-                color: AppTheme.primaryOrange,
+              child: Center(
+                child: Icon(
+                  Icons.accessibility_new_rounded,
+                  color: AppTheme.primaryOrange.withValues(alpha: 0.6),
+                  size: 34,
+                ),
               ),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(exercise.title,
-                      style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 6),
-                  Text(exercise.subtitle,
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    exercise.title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 17,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    exercise.subtitle,
+                    style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
+                  Row(
                     children: [
-                      _TinyTag(text: exercise.category),
-                      _TinyTag(text: exercise.level),
-                      _TinyTag(text: '${exercise.durationMinutes} د'),
+                      _SimpleTag(text: exercise.category, color: const Color(0xFF2D7969)),
+                      const SizedBox(width: 8),
+                      _SimpleTag(text: '${exercise.durationMinutes} د', color: AppTheme.primaryOrange),
                     ],
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+            const Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: Colors.grey),
+            const SizedBox(width: 10),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SimpleTag extends StatelessWidget {
+  final String text;
+  final Color color;
+
+  const _SimpleTag({required this.text, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -240,82 +374,29 @@ class _StatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: isOnline
-            ? AppTheme.primaryOrange.withValues(alpha: 0.1)
-            : Colors.red.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(18),
+        color: isOnline ? const Color(0xFFE2F5EF) : const Color(0xFFFFF1DF),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.circle,
-            size: 10,
-            color: isOnline ? AppTheme.primaryOrange : Colors.red,
+            size: 8,
+            color: isOnline ? const Color(0xFF2D7969) : AppTheme.primaryOrange,
           ),
           const SizedBox(width: 8),
-          Text(isOnline ? 'أونلاين' : 'أوفلاين'),
-        ],
-      ),
-    );
-  }
-}
-
-class _MetricBadge extends StatelessWidget {
-  const _MetricBadge({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
           Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 20,
+            isOnline ? 'متصل' : 'محلي',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              color: isOnline ? const Color(0xFF2D7969) : AppTheme.primaryOrange,
             ),
           ),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.white70),
-          ),
         ],
-      ),
-    );
-  }
-}
-
-class _TinyTag extends StatelessWidget {
-  const _TinyTag({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryOrange.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.primaryOrange,
-            ),
       ),
     );
   }

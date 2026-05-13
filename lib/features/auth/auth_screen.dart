@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/theme/app_theme.dart';
+import '../../core/widgets/animated_widgets.dart';
 import '../../providers/auth_provider.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -27,93 +29,217 @@ class _AuthScreenState extends State<AuthScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(),
+        backgroundColor: Colors.white,
         body: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(18, 0, 18, 36),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _isLogin ? 'تسجيل الدخول' : 'إنشاء حساب ومزامنة',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Firebase مخصص لإدارة المستخدمين والمزامنة السحابية، بينما تبقى SQLite فعالة محليًا حتى لو انقطع الإنترنت.',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 24),
-                if (!_isLogin) ...[
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'الاسم'),
-                    validator: _required,
+          child: Column(
+            children: [
+              // Header with Image/Gradient
+              Container(
+                height: 280,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppTheme.primaryOrange, AppTheme.primaryDark],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _cityController,
-                    decoration: const InputDecoration(labelText: 'المدينة'),
-                    validator: _required,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _ageController,
-                    decoration: const InputDecoration(labelText: 'العمر'),
-                    keyboardType: TextInputType.number,
-                    validator: _required,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _medicalNotesController,
-                    minLines: 2,
-                    maxLines: 3,
-                    decoration: const InputDecoration(
-                      labelText: 'ملاحظات صحية مختصرة',
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'البريد الإلكتروني'),
-                  validator: _required,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'كلمة المرور'),
-                  obscureText: true,
-                  validator: _required,
-                ),
-                const SizedBox(height: 12),
-                if (auth.error != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      auth.error!,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  ),
-                ElevatedButton(
-                  onPressed: auth.loading ? null : _submit,
-                  child: Text(_isLogin ? 'دخول' : 'إنشاء الحساب'),
-                ),
-                const SizedBox(height: 10),
-                TextButton(
-                  onPressed: auth.loading
-                      ? null
-                      : () => setState(() => _isLogin = !_isLogin),
-                  child: Text(
-                    _isLogin ? 'ليس لديك حساب؟ أنشئ واحدًا' : 'لديك حساب بالفعل؟ سجل الدخول',
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(60),
                   ),
                 ),
-              ],
-            ),
+                child: SafeArea(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.accessibility_new_rounded,
+                            color: Colors.white, size: 60),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'نبض الحركة',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 34,
+                            ),
+                      ),
+                      Text(
+                        'جودة الحياة تبدأ من هنا',
+                        style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            fontSize: 16,
+                            letterSpacing: 1),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(30, 40, 30, 40),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _isLogin ? 'تسجيل الدخول' : 'إنشاء حساب',
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 28,
+                            ),
+                      ),
+                      const SizedBox(height: 30),
+                      if (!_isLogin) ...[
+                        _buildField(
+                          controller: _nameController,
+                          label: 'الاسم الكامل',
+                          icon: Icons.person_outline_rounded,
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: _buildField(
+                                controller: _cityController,
+                                label: 'المدينة',
+                                icon: Icons.location_city_rounded,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              flex: 1,
+                              child: _buildField(
+                                controller: _ageController,
+                                label: 'العمر',
+                                icon: Icons.calendar_today_rounded,
+                                keyboardType: TextInputType.number,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        _buildField(
+                          controller: _medicalNotesController,
+                          label: 'ملاحظات صحية',
+                          icon: Icons.note_alt_outlined,
+                          maxLines: 2,
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                      _buildField(
+                        controller: _emailController,
+                        label: 'البريد الإلكتروني',
+                        icon: Icons.alternate_email_rounded,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildField(
+                        controller: _passwordController,
+                        label: 'كلمة المرور',
+                        icon: Icons.lock_open_rounded,
+                        obscureText: true,
+                      ),
+
+                      const SizedBox(height: 40),
+
+                      if (auth.error != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Text(
+                            auth.error!,
+                            style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 60,
+                        child: AnimatedButton(
+                          onPressed: auth.loading ? () {} : _submit,
+                          label: _isLogin ? 'دخول' : 'تأكيد الحساب',
+                          isLoading: auth.loading,
+                          icon: Icons.arrow_back_rounded,
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+                      Center(
+                        child: TextButton(
+                          onPressed: auth.loading
+                              ? null
+                              : () => setState(() => _isLogin = !_isLogin),
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(color: Colors.grey[800], fontSize: 15, fontFamily: 'Tajawal'),
+                              children: [
+                                TextSpan(text: _isLogin ? 'ليس لديك حساب؟ ' : 'لديك حساب بالفعل؟ '),
+                                TextSpan(
+                                  text: _isLogin ? 'اشترك الآن' : 'سجل الدخول',
+                                  style: const TextStyle(
+                                    color: AppTheme.primaryOrange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      style: const TextStyle(fontWeight: FontWeight.w600),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+        prefixIcon: Icon(icon, color: AppTheme.primaryOrange, size: 22),
+        filled: true,
+        fillColor: Colors.grey[50],
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(24),
+          borderSide: BorderSide(color: Colors.grey[200]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(24),
+          borderSide: const BorderSide(color: AppTheme.primaryOrange, width: 1.5),
+        ),
+      ),
+      validator: (value) =>
+          (value == null || value.trim().isEmpty) ? 'هذا الحقل مطلوب' : null,
     );
   }
 
@@ -145,13 +271,6 @@ class _AuthScreenState extends State<AuthScreen> {
     if (success && mounted) {
       Navigator.of(context).pop();
     }
-  }
-
-  String? _required(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'هذا الحقل مطلوب';
-    }
-    return null;
   }
 
   @override
