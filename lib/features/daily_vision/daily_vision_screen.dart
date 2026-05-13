@@ -27,14 +27,14 @@ class _DailyVisionScreenState extends State<DailyVisionScreen> {
               expandedHeight: 280,
               pinned: true,
               stretch: true,
-              backgroundColor: AppTheme.primaryOrange,
+              backgroundColor: AppTheme.primaryTeal,
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [AppTheme.primaryOrange, AppTheme.primaryDark],
+                      colors: [AppTheme.primaryTeal, AppTheme.deepTeal],
                     ),
                   ),
                   child: Column(
@@ -131,12 +131,12 @@ class _DailyVisionScreenState extends State<DailyVisionScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryOrange.withValues(alpha: 0.1),
+                  color: AppTheme.primaryTeal.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${progress.averageAccuracy.toStringAsFixed(0)}%',
-                  style: const TextStyle(color: AppTheme.primaryOrange, fontWeight: FontWeight.w900, fontSize: 18),
+                  style: const TextStyle(color: AppTheme.primaryTeal, fontWeight: FontWeight.w900, fontSize: 18),
                 ),
               ),
             ],
@@ -145,7 +145,7 @@ class _DailyVisionScreenState extends State<DailyVisionScreen> {
           CustomProgressBar(
             value: accuracyFactor,
             label: 'مدى التقدم',
-            color: AppTheme.primaryOrange,
+            color: AppTheme.primaryTeal,
           ),
         ],
       ),
@@ -183,7 +183,7 @@ class _DailyVisionScreenState extends State<DailyVisionScreen> {
           label: 'أفضل دقة',
           value: '${progress.averageAccuracy > 0 ? (progress.averageAccuracy + 5).clamp(0, 100).toInt() : 0}%',
           icon: Icons.auto_awesome_rounded,
-          color: AppTheme.primaryOrange,
+          color: AppTheme.primaryTeal,
         ),
       ],
     );
@@ -192,7 +192,7 @@ class _DailyVisionScreenState extends State<DailyVisionScreen> {
   Widget _buildVisionTasks(BuildContext context) {
     return Column(
       children: [
-        _VisionTaskItem(title: 'الاستمرارية هي السر', desc: 'حافظ على أداء تمرين واحد على الأقل يومياً.', icon: Icons.bolt_rounded, color: AppTheme.primaryOrange),
+        _VisionTaskItem(title: 'الاستمرارية هي السر', desc: 'حافظ على أداء تمرين واحد على الأقل يومياً.', icon: Icons.bolt_rounded, color: AppTheme.primaryTeal),
         const SizedBox(height: 16),
         _VisionTaskItem(title: 'دقة الحركة', desc: 'ركز على بطء الحركة للحصول على نتائج أفضل.', icon: Icons.gps_fixed_rounded, color: const Color(0xFF2D7969)),
       ],
@@ -209,7 +209,7 @@ class _DailyVisionScreenState extends State<DailyVisionScreen> {
       ),
       child: Column(
         children: [
-          const Icon(Icons.format_quote_rounded, color: AppTheme.primaryOrange, size: 40),
+          const Icon(Icons.format_quote_rounded, color: AppTheme.primaryTeal, size: 40),
           const SizedBox(height: 16),
           const Text(
             '"الحركة هي الحياة، والحياة هي الحركة."',

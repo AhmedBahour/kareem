@@ -184,7 +184,7 @@ class GradientText extends StatelessWidget {
     this.text, {
     super.key,
     this.baseStyle,
-    this.colors = const [AppTheme.primaryOrange, AppTheme.primaryDark],
+    this.colors = const [AppTheme.primaryTeal, AppTheme.deepTeal],
   });
 
   @override
@@ -218,7 +218,7 @@ class CustomProgressBar extends StatelessWidget {
     super.key,
     required this.value,
     required this.label,
-    this.color = AppTheme.primaryOrange,
+    this.color = AppTheme.primaryTeal,
     this.animationDuration = const Duration(milliseconds: 800),
   });
 
@@ -351,7 +351,7 @@ class _ExpandableCardState extends State<ExpandableCard>
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.primaryOrange.withValues(alpha: 0.2),
+          color: AppTheme.primaryTeal.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -361,12 +361,12 @@ class _ExpandableCardState extends State<ExpandableCard>
             leading: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppTheme.primaryOrange.withValues(alpha: 0.1),
+                color: AppTheme.primaryTeal.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 widget.icon,
-                color: AppTheme.primaryOrange,
+                color: AppTheme.primaryTeal,
               ),
             ),
             title: Text(

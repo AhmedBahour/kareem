@@ -2,109 +2,99 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Figma Design Colors
-  static const Color primaryOrange = Color(0xFFD4883B); // Main orange/brown
-  static const Color primaryDark = Color(0xFFC97E3E); // Darker orange
-  static const Color sand = Color(0xFFF5F1EB); // Light background
-  static const Color coral = Color(0xFFDE6B48); // Accent color
-  static const Color teal = Color(0xFF0F6E6E); // Legacy (for compatibility)
-  static const Color pine = Color(0xFF2C2C2C); // Dark text
-  static const Color mist = Color(0xFFE8F3F1); // Light accent
-  static const Color lightBg = Color(0xFFFAF8F5); // Very light background
+  // Medical & Professional Palette
+  static const Color primaryTeal = Color(0xFF1DA2BD); // Primary Brand
+  static const Color deepTeal = Color(0xFF02303A); // Backgrounds/Text
+  static const Color lightTeal = Color(0xFFE0F7FA); // Accent/BG
+  static const Color accentOrange = Color(0xFFDE6B48); // Highlights
+  static const Color softGrey = Color(0xFF686868); // Secondary Text
+  static const Color pureWhite = Color(0xFFFFFFFF);
+  static const Color offWhite = Color(0xFFF7F7F8);
 
   static ThemeData light() {
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryOrange,
-        primary: primaryOrange,
-        secondary: coral,
-        surface: Colors.white,
+        seedColor: primaryTeal,
+        primary: primaryTeal,
+        secondary: deepTeal,
+        surface: pureWhite,
         brightness: Brightness.light,
       ),
     );
 
     final textTheme = GoogleFonts.tajawalTextTheme(base.textTheme).copyWith(
       displaySmall: GoogleFonts.tajawal(
-        fontWeight: FontWeight.w800,
-        color: pine,
+        fontWeight: FontWeight.w900,
+        color: deepTeal,
       ),
       headlineMedium: GoogleFonts.tajawal(
-        fontWeight: FontWeight.w800,
-        color: pine,
+        fontWeight: FontWeight.w900,
+        color: deepTeal,
       ),
       titleLarge: GoogleFonts.tajawal(
-        fontWeight: FontWeight.w700,
-        color: pine,
+        fontWeight: FontWeight.w800,
+        color: deepTeal,
       ),
       bodyLarge: GoogleFonts.tajawal(
-        fontWeight: FontWeight.w500,
-        color: pine,
+        fontWeight: FontWeight.w600,
+        color: deepTeal,
       ),
       bodyMedium: GoogleFonts.tajawal(
         fontWeight: FontWeight.w500,
-        color: pine.withValues(alpha: 0.88),
+        color: softGrey,
       ),
     );
 
     return base.copyWith(
-      scaffoldBackgroundColor: lightBg,
+      scaffoldBackgroundColor: offWhite,
       textTheme: textTheme,
       cardTheme: CardThemeData(
-        color: Colors.white,
+        color: pureWhite,
         margin: EdgeInsets.zero,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(26),
+          borderRadius: BorderRadius.circular(30),
         ),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: textTheme.titleLarge,
       ),
-      chipTheme: base.chipTheme.copyWith(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        side: BorderSide.none,
-      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        fillColor: pureWhite,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: Colors.grey[200]!),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: Colors.grey[100]!),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(color: primaryOrange, width: 1.2),
+          borderSide: const BorderSide(color: primaryTeal, width: 1.5),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: primaryOrange,
-          foregroundColor: Colors.white,
+          backgroundColor: primaryTeal,
+          foregroundColor: pureWhite,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
           textStyle: GoogleFonts.tajawal(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
             fontSize: 16,
           ),
         ),
-      ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: Colors.white,
-        selectedItemColor: primaryOrange,
-        unselectedItemColor: Color(0xFF7A8C90),
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
       ),
     );
   }

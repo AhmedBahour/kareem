@@ -120,12 +120,12 @@ class SettingsScreen extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppTheme.primaryOrange.withValues(alpha: 0.1),
+            color: AppTheme.primaryTeal.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
             icon,
-            color: AppTheme.primaryOrange,
+            color: AppTheme.primaryTeal,
             size: 24,
           ),
         ),
@@ -173,12 +173,12 @@ class SettingsScreen extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppTheme.primaryOrange.withValues(alpha: 0.1),
+            color: AppTheme.primaryTeal.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
             icon,
-            color: AppTheme.primaryOrange,
+            color: AppTheme.primaryTeal,
             size: 24,
           ),
         ),
@@ -195,7 +195,7 @@ class SettingsScreen extends StatelessWidget {
         trailing: Switch(
           value: value,
           onChanged: onChanged,
-          activeThumbColor: AppTheme.primaryOrange,
+          activeThumbColor: AppTheme.primaryTeal,
         ),
       ),
     );

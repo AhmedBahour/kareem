@@ -41,8 +41,8 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
 
     return Scaffold(
       body: pages[_currentIndex],
-      extendBody: true, // Allow body to extend behind the navbar
-      bottomNavigationBar: _ModernBottomNavBar(
+      extendBody: true,
+      bottomNavigationBar: _MinimalBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
       ),
@@ -50,23 +50,23 @@ class _HomeShellScreenState extends State<HomeShellScreen> {
   }
 }
 
-class _ModernBottomNavBar extends StatelessWidget {
+class _MinimalBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const _ModernBottomNavBar({required this.currentIndex, required this.onTap});
+  const _MinimalBottomNavBar({required this.currentIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 30),
-      height: 75,
+      margin: const EdgeInsets.fromLTRB(24, 0, 24, 30),
+      height: 70,
       decoration: BoxDecoration(
-        color: const Color(0xFF2C2C2C),
-        borderRadius: BorderRadius.circular(30),
+        color: AppTheme.deepTeal,
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: AppTheme.deepTeal.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -75,31 +75,11 @@ class _ModernBottomNavBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _NavBarItem(
-            icon: Icons.home_rounded,
-            isSelected: currentIndex == 0,
-            onTap: () => onTap(0),
-          ),
-          _NavBarItem(
-            icon: Icons.visibility_rounded,
-            isSelected: currentIndex == 1,
-            onTap: () => onTap(1),
-          ),
-          _NavBarItem(
-            icon: Icons.calendar_today_rounded,
-            isSelected: currentIndex == 2,
-            onTap: () => onTap(2),
-          ),
-          _NavBarItem(
-            icon: Icons.bar_chart_rounded,
-            isSelected: currentIndex == 3,
-            onTap: () => onTap(3),
-          ),
-          _NavBarItem(
-            icon: Icons.settings_rounded,
-            isSelected: currentIndex == 4,
-            onTap: () => onTap(4),
-          ),
+          _NavBarItem(icon: Icons.grid_view_rounded, isSelected: currentIndex == 0, onTap: () => onTap(0)),
+          _NavBarItem(icon: Icons.insights_rounded, isSelected: currentIndex == 1, onTap: () => onTap(1)),
+          _NavBarItem(icon: Icons.calendar_month_rounded, isSelected: currentIndex == 2, onTap: () => onTap(2)),
+          _NavBarItem(icon: Icons.history_rounded, isSelected: currentIndex == 3, onTap: () => onTap(3)),
+          _NavBarItem(icon: Icons.person_outline_rounded, isSelected: currentIndex == 4, onTap: () => onTap(4)),
         ],
       ),
     );
@@ -117,19 +97,19 @@ class _NavBarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      highlightColor: Colors.transparent,
       splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryOrange : Colors.transparent,
-          shape: BoxShape.circle,
+          color: isSelected ? AppTheme.primaryTeal : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Icon(
           icon,
           color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.4),
-          size: 26,
+          size: 24,
         ),
       ),
     );

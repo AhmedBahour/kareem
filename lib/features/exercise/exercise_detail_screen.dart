@@ -22,32 +22,35 @@ class ExerciseDetailScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         body: CustomScrollView(
           slivers: [
-            // Sliver Header with Hero-like effect
             SliverAppBar(
-              expandedHeight: 250,
+              expandedHeight: 300,
               pinned: true,
-              stretch: true,
-              backgroundColor: AppTheme.primaryOrange,
+              backgroundColor: AppTheme.deepTeal,
               flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppTheme.primaryOrange, AppTheme.primaryDark],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [AppTheme.deepTeal, AppTheme.primaryTeal],
+                          begin: Alignment.bottomRight,
+                          end: Alignment.topLeft,
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.accessibility_new_rounded,
-                      size: 100,
-                      color: Colors.white.withValues(alpha: 0.3),
+                    Center(
+                      child: Icon(
+                        Icons.fitness_center_rounded,
+                        size: 120,
+                        color: Colors.white.withValues(alpha: 0.15),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
                 title: Text(
                   exercise.title,
-                  style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.white),
+                  style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.white, fontSize: 18),
                 ),
                 centerTitle: true,
               ),
@@ -56,104 +59,53 @@ class ExerciseDetailScreen extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
               ),
             ),
-
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.fromLTRB(24, 32, 24, 150),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Exercise Info Row
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _DetailInfoTile(
-                          label: 'المدة',
-                          value: '${exercise.durationMinutes} د',
-                          icon: Icons.timer_outlined,
-                        ),
-                        _DetailInfoTile(
-                          label: 'المستوى',
-                          value: exercise.level,
-                          icon: Icons.speed_rounded,
-                        ),
-                        _DetailInfoTile(
-                          label: 'الهدف',
-                          value: '${exercise.targetAccuracy.toInt()}%',
-                          icon: Icons.bolt_rounded,
-                        ),
+                        _StatItem(label: 'الهدف', value: '${exercise.targetAccuracy.toInt()}%', icon: Icons.bolt_rounded),
+                        _StatItem(label: 'المدة', value: '${exercise.durationMinutes} د', icon: Icons.timer_outlined),
+                        _StatItem(label: 'المستوى', value: exercise.level, icon: Icons.bar_chart_rounded),
                       ],
                     ),
-
-                    const SizedBox(height: 32),
-
-                    Text(
-                      'عن الجلسة',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
-                    ),
+                    const SizedBox(height: 40),
+                    Text('حول التمرين', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900)),
                     const SizedBox(height: 12),
                     Text(
                       exercise.description,
-                      style: TextStyle(height: 1.6, color: Colors.grey[700], fontSize: 15),
+                      style: TextStyle(height: 1.6, color: AppTheme.softGrey, fontSize: 15, fontWeight: FontWeight.w500),
                     ),
-
-                    const SizedBox(height: 32),
-
-                    Text(
-                      'خطوات التنفيذ',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Instruction List
-                    ...exercise.instructions.asMap().entries.map((entry) => Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: _InstructionCard(
-                            stepNumber: entry.key + 1,
-                            instruction: entry.value,
-                          ),
-                        )),
-
+                    const SizedBox(height: 40),
+                    Text('الخطوات العلاجية', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900)),
                     const SizedBox(height: 24),
-
-                    // Wellness Card
+                    ...exercise.instructions.asMap().entries.map((e) => _StepLine(number: e.key + 1, text: e.value)),
+                    const SizedBox(height: 40),
                     Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF0F7F6),
+                        color: AppTheme.primaryTeal.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: const Color(0xFF2D7969).withValues(alpha: 0.1)),
+                        border: Border.all(color: AppTheme.primaryTeal.withValues(alpha: 0.1)),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.lightbulb_outline_rounded, color: Color(0xFF2D7969)),
+                          const Icon(Icons.info_outline_rounded, color: AppTheme.primaryTeal),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'نصيحة طبية',
-                                  style: TextStyle(
-                                    color: Color(0xFF2D7969),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  exercise.wellnessNote,
-                                  style: TextStyle(color: Colors.grey[800], fontSize: 14, height: 1.4),
-                                ),
-                              ],
+                            child: Text(
+                              exercise.wellnessNote,
+                              style: const TextStyle(color: AppTheme.deepTeal, height: 1.5, fontWeight: FontWeight.w600, fontSize: 14),
                             ),
                           ),
                         ],
                       ),
                     ),
-
-                    const SizedBox(height: 120), // Bottom padding
                   ],
                 ),
               ),
@@ -161,29 +113,17 @@ class ExerciseDetailScreen extends StatelessWidget {
           ],
         ),
         bottomSheet: Container(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 34),
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
           decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -5),
-              ),
-            ],
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
           ),
           child: AnimatedButton(
-            onPressed: user == null
-                ? () {}
-                : () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => LiveSessionScreen(exercise: exercise),
-                      ),
-                    );
-                  },
-            label: 'ابدأ الجلسة الآن',
-            icon: Icons.play_circle_fill_rounded,
+            onPressed: user == null ? () {} : () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => LiveSessionScreen(exercise: exercise)));
+            },
+            label: 'ابدأ الجلسة العلاجية',
+            icon: Icons.play_arrow_rounded,
           ),
         ),
       ),
@@ -191,87 +131,52 @@ class ExerciseDetailScreen extends StatelessWidget {
   }
 }
 
-class _DetailInfoTile extends StatelessWidget {
+class _StatItem extends StatelessWidget {
   final String label;
   final String value;
   final IconData icon;
-
-  const _DetailInfoTile({required this.label, required this.value, required this.icon});
+  const _StatItem({required this.label, required this.value, required this.icon});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.grey[50],
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey[100]!),
-          ),
-          child: Icon(icon, color: AppTheme.primaryOrange, size: 24),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          value,
-          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-        ),
-        Text(
-          label,
-          style: TextStyle(color: Colors.grey[600], fontSize: 12),
-        ),
+        Icon(icon, color: AppTheme.primaryTeal, size: 24),
+        const SizedBox(height: 8),
+        Text(value, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: AppTheme.deepTeal)),
+        Text(label, style: const TextStyle(color: AppTheme.softGrey, fontSize: 12, fontWeight: FontWeight.bold)),
       ],
     );
   }
 }
 
-class _InstructionCard extends StatelessWidget {
-  final int stepNumber;
-  final String instruction;
-
-  const _InstructionCard({required this.stepNumber, required this.instruction});
+class _StepLine extends StatelessWidget {
+  final int number;
+  final String text;
+  const _StepLine({required this.number, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: AppTheme.primaryOrange,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.primaryOrange.withValues(alpha: 0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: const BoxDecoration(color: AppTheme.deepTeal, shape: BoxShape.circle),
+            child: Center(child: Text(number.toString(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
           ),
-          child: Center(
+          const SizedBox(width: 20),
+          Expanded(
             child: Text(
-              stepNumber.toString(),
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+              text,
+              style: const TextStyle(fontSize: 15, height: 1.5, fontWeight: FontWeight.w600, color: AppTheme.deepTeal),
             ),
           ),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              instruction,
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, height: 1.5),
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

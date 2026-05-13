@@ -39,9 +39,9 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
               Tab(text: 'هذا الأسبوع'),
               Tab(text: 'الشهر'),
             ],
-            labelColor: AppTheme.primaryOrange,
+            labelColor: AppTheme.primaryTeal,
             unselectedLabelColor: Colors.grey,
-            indicatorColor: AppTheme.primaryOrange,
+            indicatorColor: AppTheme.primaryTeal,
           ),
         ),
         body: TabBarView(
@@ -75,7 +75,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen>
           '10:30 صباحاً',
           30,
           Icons.schedule_rounded,
-          AppTheme.primaryOrange,
+          AppTheme.primaryTeal,
         ),
         const SizedBox(height: 12),
         _buildActivityCard(

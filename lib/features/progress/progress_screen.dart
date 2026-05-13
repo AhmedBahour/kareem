@@ -35,7 +35,7 @@ class ProgressScreen extends StatelessWidget {
                     label: 'متوسط الدقة',
                     value: '${provider.averageAccuracy.toStringAsFixed(0)}%',
                     icon: Icons.bolt_rounded,
-                    color: AppTheme.primaryOrange,
+                    color: AppTheme.primaryTeal,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -102,7 +102,7 @@ class ProgressScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.calendar_today_rounded, color: AppTheme.primaryOrange, size: 20),
+                    const Icon(Icons.calendar_today_rounded, color: AppTheme.primaryTeal, size: 20),
                     const SizedBox(width: 16),
                     Text(
                       'عرض تاريخ: ${DateFormat('dd MMMM yyyy', 'ar').format(provider.selectedDate)}',
@@ -273,7 +273,7 @@ class _SyncBadge extends StatelessWidget {
       child: Text(
         isSynced ? 'متزامن' : 'محلي',
         style: TextStyle(
-          color: isSynced ? const Color(0xFF2D7969) : AppTheme.primaryOrange,
+          color: isSynced ? const Color(0xFF2D7969) : AppTheme.primaryTeal,
           fontSize: 11,
           fontWeight: FontWeight.bold,
         ),

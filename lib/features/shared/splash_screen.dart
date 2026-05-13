@@ -66,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen>
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: AppTheme.lightBg,
+        backgroundColor: AppTheme.offWhite,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -79,11 +79,11 @@ class _SplashScreenState extends State<SplashScreen>
                   width: 140,
                   height: 140,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryOrange,
+                    color: AppTheme.primaryTeal,
                     borderRadius: BorderRadius.circular(50),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                        color: AppTheme.primaryTeal.withValues(alpha: 0.3),
                         blurRadius: 40,
                         offset: const Offset(0, 20),
                       ),
@@ -133,7 +133,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 child: const CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    AppTheme.primaryOrange,
+                    AppTheme.primaryTeal,
                   ),
                 ),
               ),
