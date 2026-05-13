@@ -1,17 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import '../models/app_user_model.dart';
+import '../local/app_database.dart';
 import '../models/exercise_session_model.dart';
 import 'firebase_service_enhanced.dart';
-import 'local_storage_service.dart';
 
 class DataSyncService extends ChangeNotifier {
   final FirebaseServiceEnhanced firebaseService;
-  final LocalStorageService localStorageService;
+  final AppDatabase database;
 
   DataSyncService({
     required this.firebaseService,
-    required this.localStorageService,
+    required this.database,
   });
 
   bool _isSyncing = false;
@@ -51,15 +50,27 @@ class DataSyncService extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Sync user sessions and data
       final uid = firebaseService.currentFirebaseUser?.uid;
       if (uid != null) {
-        // This would be implemented based on your data structure
+        // Sync pending local sessions to cloud
+        final pendingSessions = await database.getUnsyncedSessions();
+        for (var session in pendingSessions) {
+          if (session.userId == uid) {
+            await firebaseService.saveExerciseSession(session);
+            await database.markSessionSynced(session.id);
+          }
+        }
+
+        // Optionally fetch from cloud to local
+        final cloudSessions = await firebaseService.getUserSessions(uid);
+        for (var session in cloudSessions) {
+          await database.insertSession(session.copyWith(isSynced: true));
+        }
+
         _lastSyncTime = DateTime.now();
-        print('✓ All data synced successfully at $_lastSyncTime');
       }
     } catch (e) {
-      print('❌ Sync error: $e');
+      // Silently handle sync errors
     } finally {
       _isSyncing = false;
       notifyListeners();
@@ -68,66 +79,28 @@ class DataSyncService extends ChangeNotifier {
 
   Future<void> saveSessionWithSync(ExerciseSessionModel session) async {
     // Save locally first
-    await localStorageService.saveSession(session);
+    await database.insertSession(session);
 
-    // Try to sync if online
-    if (_isOnline) {
+    // Try to sync if online and not a guest session
+    if (_isOnline && session.userId != 'guest_local_user') {
       try {
         await firebaseService.saveExerciseSession(session);
-        print('✓ Session synced to cloud');
+        await database.markSessionSynced(session.id);
       } catch (e) {
-        print('⚠️ Session saved locally, will sync later: $e');
+        // Silently fail, will sync later
       }
     }
 
     notifyListeners();
   }
 
-  Future<List<ExerciseSessionModel>> getSessionsWithSync() async {
-    // Try cloud first if online
-    if (_isOnline) {
-      try {
-        final uid = firebaseService.currentFirebaseUser?.uid;
-        if (uid != null) {
-          final cloudSessions = await firebaseService.getUserSessions(uid);
-          // Update local cache
-          for (var session in cloudSessions) {
-            await localStorageService.saveSession(session);
-          }
-          return cloudSessions;
-        }
-      } catch (e) {
-        print('⚠️ Could not fetch from cloud: $e');
-      }
-    }
-
-    // Fall back to local
-    return await localStorageService.getSessions();
+  Future<List<ExerciseSessionModel>> getSessionsWithSync(String userId) async {
+    return await database.getSessionsForUser(userId);
   }
 
-  Stream<List<ExerciseSessionModel>> watchSessions() {
-    final uid = firebaseService.currentFirebaseUser?.uid;
-    if (uid != null && _isOnline) {
-      return firebaseService.watchUserSessions(uid);
-    }
-
-    // Return local stream if offline
-    return Stream.value([]); // Would need to implement local stream
-  }
-
-  Future<void> dispose() async {
+  @override
+  void dispose() {
     firebaseService.dispose();
-  }
-}
-
-class LocalStorageService {
-  // Implement local storage operations
-  Future<void> saveSession(ExerciseSessionModel session) async {
-    // SQLite implementation
-  }
-
-  Future<List<ExerciseSessionModel>> getSessions() async {
-    // SQLite implementation
-    return [];
+    super.dispose();
   }
 }

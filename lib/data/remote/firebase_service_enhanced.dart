@@ -13,7 +13,7 @@ class FirebaseServiceEnhanced {
   bool _isReady = false;
   FirebaseAuth? _auth;
   FirebaseFirestore? _firestore;
-  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   bool _isOnline = true;
 
   final List<Function()> _pendingSyncOperations = [];
@@ -61,7 +61,6 @@ class FirebaseServiceEnhanced {
 
       _isReady = true;
     } catch (e) {
-      print('Firebase initialization error: $e');
       rethrow;
     }
   }
@@ -73,10 +72,7 @@ class FirebaseServiceEnhanced {
       final wasOnline = _isOnline;
       _isOnline = !result.contains(ConnectivityResult.none);
 
-      if (wasOnline && !_isOnline) {
-        print('📡 Went offline - storing pending operations');
-      } else if (!wasOnline && _isOnline) {
-        print('📡 Back online - syncing pending operations');
+      if (!wasOnline && _isOnline) {
         _syncPendingOperations();
       }
     });
@@ -88,7 +84,7 @@ class FirebaseServiceEnhanced {
         final operation = _pendingSyncOperations.removeAt(0);
         await operation();
       } catch (e) {
-        print('Sync error: $e');
+        // Continue with next
       }
     }
   }
@@ -97,40 +93,25 @@ class FirebaseServiceEnhanced {
     required String email,
     required String password,
   }) async {
-    try {
-      return await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } catch (e) {
-      print('Registration error: $e');
-      rethrow;
-    }
+    return await _firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
   }
 
   Future<UserCredential> login({
     required String email,
     required String password,
   }) async {
-    try {
-      return await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } catch (e) {
-      print('Login error: $e');
-      rethrow;
-    }
+    return await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
   }
 
   Future<void> logout() async {
-    try {
-      await _firebaseAuth.signOut();
-      _pendingSyncOperations.clear();
-    } catch (e) {
-      print('Logout error: $e');
-      rethrow;
-    }
+    await _firebaseAuth.signOut();
+    _pendingSyncOperations.clear();
   }
 
   Future<void> saveUserData(AppUserModel user) async {
@@ -138,15 +119,14 @@ class FirebaseServiceEnhanced {
     if (uid == null) throw Exception('User not authenticated');
 
     Future<void> operation() async {
-      await _firebaseDb.collection('users').doc(uid).set({
-        'name': user.name,
-        'email': user.email,
-        'city': user.city,
-        'age': user.age,
-        'medicalNotes': user.medicalNotes,
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+      // Use toMap() and handle types carefully for Firestore
+      final data = user.toMap();
+      // Firestore stores isGuest as bool usually, but our model uses 1/0 for SQLite
+      data['isGuest'] = user.isGuest;
+      // Preferences should be a Map in Firestore
+      data['preferences'] = user.preferences;
+
+      await _firebaseDb.collection('users').doc(uid).set(data, SetOptions(merge: true));
     }
 
     if (_isOnline) {
@@ -162,16 +142,20 @@ class FirebaseServiceEnhanced {
       if (!doc.exists) return null;
 
       final data = doc.data() as Map<String, dynamic>;
+
       return AppUserModel(
-        id: doc.id,
-        name: data['name'] ?? '',
-        email: data['email'] ?? '',
-        city: data['city'] ?? '',
-        age: data['age'] ?? 0,
-        medicalNotes: data['medicalNotes'],
+        id: data['id'] as String? ?? uid,
+        email: data['email'] as String? ?? '',
+        name: data['name'] as String? ?? '',
+        city: data['city'] as String? ?? '',
+        age: (data['age'] as num?)?.toInt() ?? 0,
+        isGuest: data['isGuest'] == true,
+        createdAt: (data['createdAt'] is String) ? DateTime.parse(data['createdAt'] as String) : DateTime.now(),
+        lastSyncAt: (data['lastSyncAt'] is String) ? DateTime.parse(data['lastSyncAt'] as String) : DateTime.now(),
+        medicalNotes: data['medicalNotes'] as String?,
+        preferences: Map<String, dynamic>.from(data['preferences'] as Map? ?? {}),
       );
     } catch (e) {
-      print('Error fetching user data: $e');
       return null;
     }
   }
@@ -185,22 +169,14 @@ class FirebaseServiceEnhanced {
           .collection('users')
           .doc(uid)
           .collection('sessions')
-          .add({
-        'exerciseId': session.exerciseId,
-        'exerciseTitle': session.exerciseTitle,
-        'durationSeconds': session.durationSeconds,
-        'accuracy': session.accuracy,
-        'repsCompleted': session.repsCompleted,
-        'feedback': session.feedback,
-        'completedAt': FieldValue.serverTimestamp(),
-      });
+          .doc(session.id)
+          .set(session.toMap(), SetOptions(merge: true));
     }
 
     if (_isOnline) {
       await operation();
     } else {
       _pendingSyncOperations.add(operation);
-      print('✓ Session saved locally, will sync when online');
     }
   }
 
@@ -215,26 +191,13 @@ class FirebaseServiceEnhanced {
           .get();
 
       return snapshot.docs
-          .map((doc) {
-            final data = doc.data();
-            return ExerciseSessionModel(
-              id: doc.id,
-              exerciseId: data['exerciseId'] ?? '',
-              exerciseTitle: data['exerciseTitle'] ?? '',
-              durationSeconds: data['durationSeconds'] ?? 0,
-              accuracy: (data['accuracy'] ?? 0.0).toDouble(),
-              repsCompleted: data['repsCompleted'] ?? 0,
-              feedback: data['feedback'],
-            );
-          })
+          .map((doc) => ExerciseSessionModel.fromMap(doc.data()))
           .toList();
     } catch (e) {
-      print('Error fetching sessions: $e');
       return [];
     }
   }
 
-  // Real-time updates
   Stream<List<ExerciseSessionModel>> watchUserSessions(String uid) {
     return _firebaseDb
         .collection('users')
@@ -244,69 +207,20 @@ class FirebaseServiceEnhanced {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) {
-            final data = doc.data();
-            return ExerciseSessionModel(
-              id: doc.id,
-              exerciseId: data['exerciseId'] ?? '',
-              exerciseTitle: data['exerciseTitle'] ?? '',
-              durationSeconds: data['durationSeconds'] ?? 0,
-              accuracy: (data['accuracy'] ?? 0.0).toDouble(),
-              repsCompleted: data['repsCompleted'] ?? 0,
-              feedback: data['feedback'],
-            );
-          })
+          .map((doc) => ExerciseSessionModel.fromMap(doc.data()))
           .toList();
     });
   }
 
-  Future<Map<String, dynamic>> getUserStatistics(String uid) async {
-    try {
-      final sessions = await getUserSessions(uid);
-
-      if (sessions.isEmpty) {
-        return {
-          'totalSessions': 0,
-          'totalMinutes': 0,
-          'averageAccuracy': 0.0,
-          'totalReps': 0,
-        };
-      }
-
-      final totalMinutes = sessions
-          .fold<int>(0, (sum, session) => sum + (session.durationSeconds ~/ 60));
-      final averageAccuracy = sessions
-              .fold<double>(0, (sum, session) => sum + session.accuracy) /
-          sessions.length;
-      final totalReps =
-          sessions.fold<int>(0, (sum, session) => sum + session.repsCompleted);
-
-      return {
-        'totalSessions': sessions.length,
-        'totalMinutes': totalMinutes,
-        'averageAccuracy': averageAccuracy,
-        'totalReps': totalReps,
-      };
-    } catch (e) {
-      print('Error fetching statistics: $e');
-      return {};
-    }
-  }
-
   Future<void> deleteUserAccount() async {
-    try {
-      final uid = _firebaseAuth.currentUser?.uid;
-      if (uid != null) {
-        await _firebaseDb.collection('users').doc(uid).delete();
-      }
-      await _firebaseAuth.currentUser?.delete();
-    } catch (e) {
-      print('Error deleting account: $e');
-      rethrow;
+    final uid = _firebaseAuth.currentUser?.uid;
+    if (uid != null) {
+      await _firebaseDb.collection('users').doc(uid).delete();
     }
+    await _firebaseAuth.currentUser?.delete();
   }
 
   void dispose() {
-    _connectivitySubscription.cancel();
+    _connectivitySubscription?.cancel();
   }
 }

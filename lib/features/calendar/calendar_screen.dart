@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/widgets/animated_widgets.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -49,7 +48,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryOrange.withValues(alpha: 0.1),
+        color: AppTheme.primaryTeal.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -130,13 +129,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: isSelected
-                  ? AppTheme.primaryOrange
+                  ? AppTheme.primaryTeal
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected
-                    ? AppTheme.primaryOrange
-                    : AppTheme.primaryOrange.withValues(alpha: 0.3),
+                    ? AppTheme.primaryTeal
+                    : AppTheme.primaryTeal.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -145,7 +144,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 day.toString(),
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: isSelected ? Colors.white : AppTheme.pine,
+                  color: isSelected ? Colors.white : AppTheme.deepTeal,
                 ),
               ),
             ),
@@ -168,7 +167,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           'جلسة تمرين',
           'اليوم الساعة 10:00 صباحاً',
           Icons.fitness_center_rounded,
-          AppTheme.primaryOrange,
+          AppTheme.primaryTeal,
         ),
         const SizedBox(height: 12),
         _buildEventCard(
